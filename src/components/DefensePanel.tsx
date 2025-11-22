@@ -4,35 +4,36 @@ import {
   AlertTriangle,
   BookOpen,
   Anchor,
-  ShieldAlert,
   Zap,
+  ExternalLink,
 } from "lucide-react";
 import type { DefenseBlock } from "../data/knowledge_base";
 import "katex/dist/katex.min.css";
-import { InlineMath, BlockMath } from "react-katex";
+import parse from "html-react-parser";
 
 interface Props {
   activeBlock: DefenseBlock | null;
 }
 
 const riskColors = {
-  low: "bg-green-100 text-green-800 border-green-200",
-  medium: "bg-yellow-100 text-yellow-800 border-yellow-200",
-  high: "bg-orange-100 text-orange-800 border-orange-200",
-  critical: "bg-red-100 text-red-800 border-red-200 animate-pulse-slow",
+  low: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  medium: "bg-amber-50 text-amber-700 border-amber-200",
+  high: "bg-orange-50 text-orange-800 border-orange-200",
+  critical: "bg-rose-50 text-rose-800 border-rose-200 animate-pulse-slow",
 };
 
 const DefensePanel: React.FC<Props> = ({ activeBlock }) => {
   if (!activeBlock) {
     return (
-      <div className="h-full flex flex-col items-center justify-center text-gray-400 p-8 text-center border-l border-gray-200 bg-gray-50">
-        <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4">
-          <Zap className="w-8 h-8 text-gray-400" />
+      <div className="h-full flex flex-col items-center justify-center text-slate-400 p-8 text-center bg-slate-50">
+        <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm border border-slate-200">
+          <Zap className="w-10 h-10 text-slate-300" />
         </div>
-        <h3 className="text-xl font-semibold text-gray-600">Chế độ chờ lệnh</h3>
-        <p className="mt-2 text-sm">
-          Chạm vào bất kỳ dòng code nào bên trái để kích hoạt hệ thống phòng
-          thủ.
+        <h3 className="text-xl font-semibold text-slate-600">
+          Hệ thống sẵn sàng
+        </h3>
+        <p className="mt-2 text-sm text-slate-500 max-w-xs">
+          Chọn một dòng code để xem phân tích chiến thuật.
         </p>
       </div>
     );
@@ -44,85 +45,105 @@ const DefensePanel: React.FC<Props> = ({ activeBlock }) => {
         key={activeBlock.id}
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -20 }}
-        transition={{ duration: 0.2 }}
-        className="h-full overflow-y-auto p-6 bg-white border-l border-gray-200 shadow-xl"
+        exit={{ opacity: 0, x: -10 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
+        className="h-full overflow-y-auto bg-white flex flex-col"
       >
-        <div className="flex items-start justify-between mb-6">
-          <h2 className="text-2xl font-bold text-slate-800">
+        <div
+          className={`p-6 border-b ${
+            activeBlock.riskLevel === "critical" ? "bg-rose-50/50" : "bg-white"
+          }`}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <span
+              className={`px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider border ${
+                riskColors[activeBlock.riskLevel]
+              }`}
+            >
+              {activeBlock.riskLevel === "critical"
+                ? "⚠️ CÂU HỎI NGUY HIỂM"
+                : `ĐỘ KHÓ: ${activeBlock.riskLevel}`}
+            </span>
+          </div>
+          <h2 className="text-3xl font-bold text-slate-800 mb-2">
             {activeBlock.title}
           </h2>
-          <span
-            className={`px-3 py-1 rounded-full text-xs font-bold uppercase border ${
-              riskColors[activeBlock.riskLevel]
-            }`}
-          >
-            {activeBlock.riskLevel === "critical"
-              ? "Rủi ro cực cao"
-              : `Rủi ro: ${activeBlock.riskLevel}`}
-          </span>
-        </div>
-
-        <div className="mb-6 bg-blue-50 p-4 rounded-lg border border-blue-100">
-          <h3 className="text-sm font-bold text-blue-800 uppercase mb-2 flex items-center">
-            <Zap className="w-4 h-4 mr-2" /> Trả lời nhanh (3s)
-          </h3>
-          <p className="text-blue-900 text-lg leading-relaxed font-medium">
-            "{activeBlock.shortAnswer}"
+          <p className="text-slate-500 font-medium italic">
+            "{activeBlock.mnemonic}"
           </p>
         </div>
 
-        <div className="space-y-4 mb-6">
-          {activeBlock.docsReference && (
-            <div className="p-4 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors">
-              <h4 className="text-xs font-bold text-gray-500 uppercase mb-1 flex items-center">
-                <BookOpen className="w-3 h-3 mr-1" /> Tài liệu tham khảo (Docs)
-              </h4>
-              <p className="text-sm font-semibold text-purple-700">
-                {activeBlock.docsReference.library} /{" "}
-                {activeBlock.docsReference.concept}
-              </p>
-              <p className="text-xs text-gray-600 italic mt-1">
-                "{activeBlock.docsReference.desc}"
+        <div className="p-6 space-y-8">
+          <div>
+            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center">
+              <Zap className="w-4 h-4 mr-2" /> Trả lời nhanh (Dưới 10s)
+            </h3>
+            <div className="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+              <p className="text-blue-900 text-lg font-medium leading-relaxed">
+                {activeBlock.shortAnswer}
               </p>
             </div>
-          )}
-
-          {activeBlock.physicsMath && (
-            <div className="p-4 rounded-lg border border-gray-200 bg-white shadow-sm">
-              <h4 className="text-xs font-bold text-gray-500 uppercase mb-2 flex items-center">
-                <Anchor className="w-3 h-3 mr-1" /> Cơ sở Vật lý
-              </h4>
-              <div className="text-lg text-center py-2">
-                <BlockMath math={activeBlock.physicsMath} />
+          </div>
+          {activeBlock.docsSnippet && (
+            <div>
+              <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center">
+                <BookOpen className="w-4 h-4 mr-2" /> Tài liệu gốc (Official
+                Docs)
+              </h3>
+              <div className="border border-slate-200 rounded-lg overflow-hidden shadow-sm bg-white">
+                <div className="bg-slate-100 px-3 py-2 border-b border-slate-200 flex items-center space-x-2">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 rounded-full bg-red-400"></div>
+                    <div className="w-2 h-2 rounded-full bg-yellow-400"></div>
+                    <div className="w-2 h-2 rounded-full bg-green-400"></div>
+                  </div>
+                  <div className="flex-1 bg-white h-6 rounded text-xs text-slate-500 flex items-center px-2 truncate">
+                    {activeBlock.docsSnippet.sourceUrl}
+                  </div>
+                  <ExternalLink className="w-3 h-3 text-slate-400" />
+                </div>
+                <div className="p-4 font-serif text-slate-700 docs-content bg-[#fcfcfc]">
+                  {parse(activeBlock.docsSnippet.contentHTML)}
+                </div>
               </div>
             </div>
           )}
-        </div>
-
-        <div className="mb-6">
-          <h3 className="text-sm font-bold text-gray-700 uppercase mb-2">
-            Giải thích chi tiết
-          </h3>
-          <p className="text-gray-600 leading-7 text-justify">
-            {activeBlock.fullExplanation}
-          </p>
-        </div>
-
-        {activeBlock.trap && (
-          <div className="mt-8 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <h3 className="text-sm font-bold text-red-700 uppercase mb-2 flex items-center">
-              <AlertTriangle className="w-4 h-4 mr-2" /> Cẩn thận câu hỏi gài!
+          <div>
+            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center">
+              <Anchor className="w-4 h-4 mr-2" /> Giải thích sâu (Nếu bị hỏi
+              thêm)
             </h3>
-            <p className="font-bold text-red-900 mb-2">
-              "{activeBlock.trap.question}"
-            </p>
-            <div className="bg-white p-3 rounded border border-red-100 text-red-800 text-sm italic">
-              <span className="font-bold not-italic">Đáp trả: </span>
-              {activeBlock.trap.answer}
-            </div>
+            <ul className="space-y-3">
+              {activeBlock.deepDive.map((item, idx) => (
+                <li key={idx} className="flex items-start text-slate-600">
+                  <span className="mr-3 text-blue-400 mt-1.5">•</span>
+                  <span className="leading-relaxed">{item}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-        )}
+          {activeBlock.trap && (
+            <div className="mt-6">
+              <h3 className="text-sm font-bold text-rose-400 uppercase tracking-wider mb-3 flex items-center">
+                <AlertTriangle className="w-4 h-4 mr-2" /> Cạm bẫy giảng viên
+              </h3>
+              <div className="bg-rose-50 border border-rose-100 rounded-lg p-5">
+                <p className="font-bold text-rose-900 mb-2 text-lg">
+                  "{activeBlock.trap.question}"
+                </p>
+                <div className="mt-3 pt-3 border-t border-rose-200/60">
+                  <p className="text-rose-800 italic">
+                    <span className="font-bold not-italic bg-white px-2 py-0.5 rounded text-xs border border-rose-200 mr-2 uppercase">
+                      Đáp trả
+                    </span>
+                    {activeBlock.trap.answer}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+          <div className="h-10"></div>
+        </div>
       </motion.div>
     </AnimatePresence>
   );
