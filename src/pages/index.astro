@@ -1,16 +1,26 @@
 ---
-
+import '../styles/global.css'; 
+import DefenseDashboard from '../components/DefenseDashboard';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hệ Thống Bảo Vệ Đồ Án - Nhóm Kiến Trúc</title>
+    <meta name="description" content="Công cụ tra cứu và phòng thủ vấn đáp bài tập lớn Vật Lý." />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  </head>
+  
+  <body>
+    
+    <main class="h-screen w-screen">
+      <DefenseDashboard client:only="react" />
+    </main>
+
+  </body>
 </html>
