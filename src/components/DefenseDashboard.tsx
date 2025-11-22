@@ -24,7 +24,7 @@ const DefenseDashboard: React.FC = () => {
             <span className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></span>
             <span className="w-3 h-3 rounded-full bg-green-500 mr-4"></span>
             <span className="font-sans font-medium text-gray-300">
-              input_file_1.py
+              bai12.py
             </span>
           </div>
 
