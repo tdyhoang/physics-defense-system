@@ -97,14 +97,49 @@ const DefensePanel: React.FC<Props> = ({ activeBlock }) => {
                     <div className="w-2 h-2 rounded-full bg-yellow-400"></div>
                     <div className="w-2 h-2 rounded-full bg-green-400"></div>
                   </div>
-                  <div className="flex-1 bg-white h-6 rounded text-xs text-slate-500 flex items-center px-2 truncate">
-                    {activeBlock.docsSnippet.sourceUrl}
-                  </div>
-                  <ExternalLink className="w-3 h-3 text-slate-400" />
+                  <a
+                    href={activeBlock.docsSnippet.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Mở trang web gốc"
+                    className="flex-1 bg-white h-6 rounded text-xs text-slate-500 hover:text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 transition-all flex items-center px-2 cursor-pointer select-none"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      className="w-3 h-3 mr-1.5 text-green-600/70"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <rect
+                        x="3"
+                        y="11"
+                        width="18"
+                        height="11"
+                        rx="2"
+                        ry="2"
+                      ></rect>
+                      <path d="M7 11V7a5 5 0 0110 0v4"></path>
+                    </svg>
+
+                    <span className="truncate flex-1 font-mono">
+                      {activeBlock.docsSnippet.sourceUrl}
+                    </span>
+
+                    <ExternalLink className="w-3 h-3 text-slate-400 ml-2 shrink-0 group-hover:text-blue-500" />
+                  </a>
                 </div>
                 <div className="p-4 font-serif text-slate-700 docs-content bg-[#fcfcfc]">
                   {parse(activeBlock.docsSnippet.contentHTML)}
                 </div>
+                <a
+                  href={activeBlock.docsSnippet.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-slate-50 text-[10px] text-slate-400 py-1 text-center border-t border-slate-100 uppercase font-bold tracking-widest hover:bg-blue-50 hover:text-blue-600 transition-colors block"
+                >
+                  Mở trang web gốc ↗
+                </a>
               </div>
             </div>
           )}
